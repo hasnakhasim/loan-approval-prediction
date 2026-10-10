@@ -1,0 +1,122 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prediction Result | GreenBank</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+    <nav class="navbar">
+        <a class="brand" href="/">
+            <span class="brand-icon">G</span>
+            GreenBank
+        </a>
+        <a class="back-link" href="/">← New estimate</a>
+    </nav>
+
+    <main class="result-main">
+        {% if error %}
+
+        <section class="result-card">
+            <div class="result-symbol rejected">!</div>
+            <p class="eyebrow green">UNABLE TO PREDICT</p>
+            <h1>Something needs attention</h1>
+            <p class="muted">{{ error }}</p>
+
+            <a class="submit-btn link-button" href="/">
+                Return to form
+            </a>
+        </section>
+
+        {% else %}
+
+        <section class="result-card">
+            <div class="result-symbol {{ 'approved' if approved else 'rejected' }}">
+                {{ '✓' if approved else '!' }}
+            </div>
+
+            <p class="eyebrow green">PREDICTION COMPLETE</p>
+            <h1>{{ prediction }}</h1>
+
+            <p class="muted result-description">
+                Your loan prediction estimate is ready.
+            </p>
+
+            <div class="probability-panel">
+                <div class="probability-heading">
+                    <span>Model-estimated probability</span>
+                    <strong>{{ "%.1f"|format(confidence) }}%</strong>
+                </div>
+
+                <div class="progress-track">
+                    <div class="progress-fill"
+                         style="width: {{ confidence }}%;">
+                    </div>
+                </div>
+
+                <p class="small-note">
+                    This is the model's estimated probability for
+                    its predicted class, not a bank's approval guarantee.
+                </p>
+            </div>
+
+            <h2 class="summary-title">Application summary</h2>
+
+            <div class="summary-grid">
+                <div>
+                    <span>Applicant income</span>
+                    <strong>{{ applicant["ApplicantIncome"] }}</strong>
+                </div>
+
+                <div>
+                    <span>Co-applicant income</span>
+                    <strong>{{ applicant["CoapplicantIncome"] }}</strong>
+                </div>
+
+                <div>
+                    <span>Loan amount</span>
+                    <strong>{{ applicant["LoanAmount"] }}</strong>
+                </div>
+
+                <div>
+                    <span>Loan term</span>
+                    <strong>{{ applicant["Loan_Amount_Term"] }} months</strong>
+                </div>
+
+                <div>
+                    <span>Credit history</span>
+                    <strong>
+                        {{ "Meets guidelines" if applicant["Credit_History"] == 1
+                           else "Does not meet guidelines" }}
+                    </strong>
+                </div>
+
+                <div>
+                    <span>Property area</span>
+                    <strong>{{ applicant["Property_Area"] }}</strong>
+                </div>
+            </div>
+
+            <a class="submit-btn link-button" href="/">
+                Try another application →
+            </a>
+
+            <p class="disclaimer">
+                Student project using historical data.
+                Not financial advice or a real bank decision.
+            </p>
+        </section>
+
+        {% endif %}
+    </main>
+
+    <footer>
+        GreenBank Demo · Loan Approval Prediction
+    </footer>
+</body>
+</html>
